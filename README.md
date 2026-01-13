@@ -20,7 +20,7 @@ https://shop.alchitry.com/products/alchitry-au
 
 ## 🗂️ Repository Structure and Versioning
 
-The project is organized into **versioned design iterations**. Each folder labeled `v0`, `v1`, `v2`, etc. represents a major architectural milestone. Version numbers increase sequentially, with earlier versions serving as the foundation for later ones.
+The project is organized into versioned design iterations. Each folder labeled `v0`, `v1`, `v2`, etc. represents a major architectural milestone. Version numbers increase sequentially, with earlier versions serving as the foundation for later ones.
 
 ### 📌 Current Versions
 
@@ -47,7 +47,7 @@ This project deliberately separates **structural design**, **behavioral definiti
 - Modules are not yet fully integrated  
 - No ISA, instruction semantics, or software execution  
 
-Think of this version as **IKEA furniture before assembly** 🪑 — all parts exist, but nothing is optimized or fully connected yet.
+Think of this version as IKEA furniture before assembly. All parts exist, but nothing is optimized or fully connected yet.
 
 ---
 
