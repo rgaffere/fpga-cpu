@@ -1,0 +1,357 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans, sans-serif); }
+  .dash { padding: 1rem 0; }
+  .section-label { font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 10px; }
+  .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+  .metric { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px 16px; }
+  .metric-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px; }
+  .metric-value { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .metric-sub { font-size: 11px; color: var(--color-text-tertiary); margin-top: 3px; }
+  .metric-badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 20px; margin-top: 4px; background: var(--color-background-success); color: var(--color-text-success); }
+  .panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .wave-container { overflow-x: auto; }
+  .wave-grid { display: grid; grid-template-columns: 80px 1fr; gap: 0; }
+  .wave-row { display: contents; }
+  .wave-label { font-size: 11px; color: var(--color-text-secondary); display: flex; align-items: center; padding-right: 12px; border-right: 0.5px solid var(--color-border-tertiary); height: 36px; font-family: var(--font-mono); }
+  .wave-track { height: 36px; display: flex; align-items: center; padding-left: 2px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .wave-row:last-child .wave-track { border-bottom: none; }
+  .tick-bar { display: flex; align-items: center; padding-left: 2px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .tick-label { display: flex; padding-left: 2px; height: 16px; }
+  .seg { height: 22px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-family: var(--font-mono); font-weight: 500; border-radius: 2px; cursor: default; transition: opacity .15s; white-space: nowrap; overflow: hidden; }
+  .seg:hover { opacity: .75; }
+  .seg-fetch  { background: #1A6B9C22; border: 0.5px solid #1A6B9C55; color: #185FA5; }
+  .seg-decode { background: #3B6D1122; border: 0.5px solid #3B6D1155; color: #3B6D11; }
+  .seg-exec   { background: #BA751722; border: 0.5px solid #BA751755; color: #BA7517; }
+  .seg-mem    { background: #993C1D22; border: 0.5px solid #993C1D55; color: #993C1D; }
+  .seg-wb     { background: #534AB722; border: 0.5px solid #534AB755; color: #534AB7; }
+  .seg-branch { background: #99355622; border: 0.5px solid #99355655; color: #993556; }
+  .seg-halt   { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); color: var(--color-text-tertiary); }
+  .seg-hi  { background: #3B6D1133; border: 0.5px solid #639922; color: #3B6D11; height: 18px; border-radius: 1px; }
+  .seg-lo  { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); height: 8px; margin-top: 7px; border-radius: 1px; }
+  .pc-seg  { height: 20px; font-size: 9px; font-family: var(--font-mono); }
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1rem; }
+  .chart-wrap { position: relative; height: 200px; }
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare-table th { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-align: left; padding: 6px 8px; border-bottom: 0.5px solid var(--color-border-secondary); }
+  .compare-table td { padding: 7px 8px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .highlight-row td { font-weight: 500; background: var(--color-background-info); color: var(--color-text-info); border-radius: 2px; }
+  .highlight-row td:first-child { border-radius: 4px 0 0 4px; }
+  .highlight-row td:last-child { border-radius: 0 4px 4px 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+  .leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--color-text-secondary); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 2px; }
+  .instr-bar { height: 18px; border-radius: 2px; display: flex; align-items: center; padding-left: 6px; font-size: 10px; font-family: var(--font-mono); font-weight: 500; margin-bottom: 4px; color: #fff; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+  .tab { padding: 5px 14px; font-size: 12px; border-radius: 20px; cursor: pointer; border: 0.5px solid var(--color-border-secondary); color: var(--color-text-secondary); background: transparent; transition: all .15s; }
+  .tab.active { background: var(--color-text-primary); color: var(--color-background-primary); border-color: var(--color-text-primary); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  @media (max-width: 600px) { .metric-grid { grid-template-columns: 1fr 1fr; } .chart-row { grid-template-columns: 1fr; } }
+</style>
+
+<div class="dash">
+
+  <div class="section-label">RG Sonic32 v1 — simulation performance report</div>
+
+  <div class="metric-grid">
+    <div class="metric">
+      <div class="metric-label">Total cycles</div>
+      <div class="metric-value">57</div>
+      <div class="metric-sub">9 instructions executed</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Average CPI</div>
+      <div class="metric-value">6.3</div>
+      <div class="metric-sub">multi-cycle FSM</div>
+      <div class="metric-badge">✓ expected</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Est. clock (Artix-7)</div>
+      <div class="metric-value">~80 MHz</div>
+      <div class="metric-sub">pre-synthesis estimate</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Est. throughput</div>
+      <div class="metric-value">~12.7 MIPS</div>
+      <div class="metric-sub">80 MHz ÷ 6.3 CPI</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('waveform')">Waveform</button>
+      <button class="tab" onclick="showTab('cpi')">CPI breakdown</button>
+      <button class="tab" onclick="showTab('compare')">Comparison</button>
+    </div>
+
+    <div id="tab-waveform" class="tab-content active">
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#1A6B9C55"></div>fetch</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#BA751755"></div>execute</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#993C1D55"></div>mem</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#534AB755"></div>writeback</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#99355655"></div>branch</div>
+      </div>
+      <div class="wave-container">
+        <div id="waveform-svg"></div>
+      </div>
+    </div>
+
+    <div id="tab-cpi" class="tab-content">
+      <div id="cpi-chart-wrap" style="position:relative;height:220px;margin-bottom:8px;"></div>
+      <p style="font-size:12px;color:var(--color-text-secondary);margin-top:8px">Cycles per instruction by type. LW is the longest path (memory read + WB). BEQ includes a branch penalty cycle.</p>
+    </div>
+
+    <div id="tab-compare" class="tab-content">
+      <table class="compare-table">
+        <thead>
+          <tr><th>CPU</th><th>Avg CPI</th><th>Est. freq</th><th>Est. MIPS</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr class="highlight-row">
+            <td>RG Sonic32 v1</td><td>6.3</td><td>~80 MHz</td><td>~12.7</td><td>Multi-cycle FSM, custom ISA</td>
+          </tr>
+          <tr><td>Textbook multi-cycle MIPS</td><td>4–6</td><td>50–100 MHz</td><td>10–20</td><td>Classic undergrad design</td></tr>
+          <tr><td>Simple pipelined RISC-V</td><td>~1.2</td><td>100–200 MHz</td><td>80–160</td><td>5-stage, basic forwarding</td></tr>
+          <tr><td>Intel 486 @ 25 MHz</td><td>—</td><td>25 MHz</td><td>~20</td><td>Commercial, 1989</td></tr>
+          <tr><td>RG Sonic32 v2 (projected)</td><td>~1.2</td><td>80–120 MHz</td><td>65–100</td><td>With 5-stage pipeline</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="section-label" style="margin-bottom:10px">Instruction trace — 9 executed, all checks passed</div>
+    <div id="instr-trace"></div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['waveform','cpi','compare'][i]===id));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.toggle('active', t.id==='tab-'+id));
+}
+
+const instrs = [
+  { cyc: 7,  ir: '0480000a', op: 'ADDI', dest: 'r4', val: 10,  cycles: 6, note: 'r4 ← 0 + 10' },
+  { cyc: 13, ir: '04a00014', op: 'ADDI', dest: 'r5', val: 20,  cycles: 6, note: 'r5 ← 0 + 20' },
+  { cyc: 19, ir: '00c42800', op: 'ADD',  dest: 'r6', val: 30,  cycles: 6, note: 'r6 ← r4 + r5' },
+  { cyc: 25, ir: '04e00100', op: 'ADDI', dest: 'r7', val: 256, cycles: 6, note: 'r7 ← 0 + 256' },
+  { cyc: 34, ir: '...',      op: 'SW',   dest: 'mem',val: null, cycles: 8, note: 'store r6 → mem' },
+  { cyc: 42, ir: '29070000', op: 'LW',   dest: 'r8', val: 30,  cycles: 9, note: 'r8 ← mem (= 30)' },
+  { cyc: 48, ir: '...',      op: 'SUB',  dest: 'flags',val:null,cycles: 6, note: 'sets Z=1' },
+  { cyc: 52, ir: '...',      op: 'BEQ',  dest: 'PC', val: null, cycles: 5, note: 'Z=1 → branch taken' },
+  { cyc: 57, ir: '...',      op: 'HALT', dest: '—',  val: null, cycles: 1, note: 'halt=1' },
+];
+
+const opColors = {
+  ADDI: '#185FA5', ADD: '#185FA5', SUB: '#185FA5',
+  SW:   '#993C1D', LW: '#993C1D',
+  BEQ:  '#993556',
+  HALT: '#5F5E5A'
+};
+
+const traceEl = document.getElementById('instr-trace');
+instrs.forEach((d,i) => {
+  const pct = Math.min(100, (d.cycles / 10) * 100);
+  const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+  const col = opColors[d.op] || '#5F5E5A';
+  const row = document.createElement('div');
+  row.style.cssText = 'display:grid;grid-template-columns:42px 52px 100px 1fr 72px;gap:6px;align-items:center;margin-bottom:6px;';
+  row.innerHTML = `
+    <span style="font-size:11px;color:var(--color-text-tertiary);font-family:var(--font-mono)">cyc ${d.cyc}</span>
+    <span style="font-size:11px;font-weight:500;color:${col};font-family:var(--font-mono)">${d.op}</span>
+    <div style="background:${col}33;border:0.5px solid ${col}66;border-radius:2px;height:16px;width:${pct}%;min-width:8px"></div>
+    <span style="font-size:11px;color:var(--color-text-secondary)">${d.note}</span>
+    <span style="font-size:11px;color:var(--color-text-tertiary);text-align:right">${d.cycles} cyc${d.val!=null?' → '+d.val:''}</span>
+  `;
+  traceEl.appendChild(row);
+});
+
+const TOTAL = 57;
+const SCALE = 10;
+const width = Math.max(600, TOTAL * SCALE + 20);
+
+const phases = [];
+const allPhases = [
+  { start:2,  end:4,  type:'fetch',   pc:'ffff0000' },
+  { start:5,  end:6,  type:'exec' },
+  { start:7,  end:7,  type:'wb',    label:'WB addi r4' },
+  { start:8,  end:10, type:'fetch',  pc:'ffff0004' },
+  { start:11, end:12, type:'exec' },
+  { start:13, end:13, type:'wb',   label:'WB addi r5' },
+  { start:14, end:16, type:'fetch', pc:'ffff0008' },
+  { start:17, end:18, type:'exec' },
+  { start:19, end:19, type:'wb',   label:'WB add r6' },
+  { start:20, end:22, type:'fetch', pc:'ffff000c' },
+  { start:23, end:24, type:'exec' },
+  { start:25, end:25, type:'wb',   label:'WB addi r7' },
+  { start:26, end:28, type:'fetch', pc:'ffff0010' },
+  { start:29, end:33, type:'mem',  label:'SW (store)' },
+  { start:34, end:36, type:'fetch', pc:'ffff0014' },
+  { start:37, end:41, type:'mem',  label:'LW (load)' },
+  { start:42, end:42, type:'wb',   label:'WB lw r8' },
+  { start:43, end:45, type:'fetch', pc:'ffff0018' },
+  { start:46, end:47, type:'exec' },
+  { start:48, end:49, type:'fetch', pc:'ffff001c' },
+  { start:50, end:51, type:'exec' },
+  { start:52, end:52, type:'branch', label:'BEQ taken' },
+  { start:53, end:55, type:'fetch', pc:'ffff0024' },
+  { start:56, end:57, type:'halt',  label:'HALT' },
+];
+
+const typeColor = {
+  fetch: '#1A6B9C', exec: '#BA7517', mem: '#993C1D', wb: '#534AB7', branch: '#993556', halt: '#73726c'
+};
+
+const halted = [false];
+for(let c=1;c<=TOTAL;c++) halted[c]=c>=56;
+const clkHigh = c => c%2===1;
+
+const svgW = TOTAL*SCALE+40;
+const svgH = 160;
+const svgEl = document.createElement('div');
+svgEl.style.cssText = `width:${svgW}px;min-width:100%`;
+svgEl.innerHTML = buildWaveformSVG(svgW, svgH);
+document.getElementById('waveform-svg').appendChild(svgEl);
+
+function buildWaveformSVG(w, h) {
+  const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+  const textCol = isDark ? '#b4b2a9' : '#888780';
+  const gridCol = isDark ? '#2c2c2a' : '#e8e6e0';
+
+  let s = `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="display:block">`;
+
+  for(let c=1;c<=TOTAL;c++) {
+    const x = 40 + (c-1)*SCALE;
+    s += `<line x1="${x}" y1="0" x2="${x}" y2="${h}" stroke="${gridCol}" stroke-width="0.5"/>`;
+  }
+
+  for(let c=1;c<=TOTAL;c+=5) {
+    const x = 40 + (c-1)*SCALE;
+    s += `<text x="${x+1}" y="10" font-size="8" fill="${textCol}" font-family="monospace">${c}</text>`;
+  }
+
+  const rows = [
+    { label: 'CLK', y: 18 },
+    { label: 'STATE', y: 52 },
+    { label: 'PC[11:0]', y: 86 },
+    { label: 'HALT', y: 120 },
+  ];
+
+  rows.forEach(r => {
+    s += `<text x="2" y="${r.y+12}" font-size="9" fill="${textCol}" font-family="monospace">${r.label}</text>`;
+    s += `<line x1="40" y1="${r.y}" x2="${w-4}" y2="${r.y}" stroke="${gridCol}" stroke-width="0.5"/>`;
+  });
+
+  for(let c=1;c<=TOTAL;c++) {
+    const x = 40+(c-1)*SCALE;
+    const hi = clkHigh(c);
+    const prev = c===1 ? false : clkHigh(c-1);
+    const cy = 18;
+    if(hi !== prev) {
+      s += `<line x1="${x}" y1="${cy}" x2="${x}" y2="${cy+20}" stroke="#3B6D11" stroke-width="1"/>`;
+    }
+    s += `<line x1="${x}" y1="${hi?cy:cy+20}" x2="${x+SCALE}" y2="${hi?cy:cy+20}" stroke="#3B6D11" stroke-width="1.5"/>`;
+  }
+
+  allPhases.forEach(p => {
+    const x = 40 + (p.start-1)*SCALE + 1;
+    const w2 = (p.end - p.start + 1)*SCALE - 2;
+    const col = typeColor[p.type] || '#888';
+    const sy = 52;
+    s += `<rect x="${x}" y="${sy+1}" width="${w2}" height="22" rx="2" fill="${col}33" stroke="${col}88" stroke-width="0.5"/>`;
+    if(w2 > 18) {
+      const label = p.label || p.type;
+      s += `<text x="${x+w2/2}" y="${sy+14}" font-size="9" text-anchor="middle" fill="${col}" font-family="monospace" font-weight="500">${label.substring(0,Math.floor(w2/6.5))}</text>`;
+    }
+  });
+
+  let prevPC = null;
+  const pcMap = {};
+  allPhases.filter(p=>p.pc).forEach(p => { for(let c=p.start;c<=p.end;c++) pcMap[c]=p.pc; });
+  for(let c=1;c<=TOTAL;c++) {
+    const x = 40+(c-1)*SCALE;
+    const pc = pcMap[c];
+    const pcShort = pc ? pc.slice(-4) : (prevPC?prevPC.slice(-4):'????');
+    if(pc && pc !== prevPC) {
+      s += `<line x1="${x}" y1="86" x2="${x}" y2="108" stroke="#185FA5" stroke-width="0.8"/>`;
+    }
+    if(pcShort) {
+      const pcY = 86;
+      s += `<rect x="${x}" y="${pcY+1}" width="${SCALE}" height="20" fill="#185FA566" stroke="none"/>`;
+      if((c-1)%5===0) s += `<text x="${x+SCALE/2}" y="${pcY+14}" font-size="7.5" text-anchor="middle" fill="#185FA5" font-family="monospace">${pcShort}</text>`;
+    }
+    prevPC = pc || prevPC;
+  }
+
+  for(let c=1;c<=TOTAL;c++) {
+    const x = 40+(c-1)*SCALE;
+    const haltY = 120;
+    const hi = halted[c];
+    const prev = c===1 ? false : halted[c-1];
+    if(hi !== prev) {
+      s += `<line x1="${x}" y1="${haltY}" x2="${x}" y2="${haltY+20}" stroke="#993C1D" stroke-width="1"/>`;
+    }
+    s += `<line x1="${x}" y1="${hi?haltY:haltY+20}" x2="${x+SCALE}" y2="${hi?haltY:haltY+20}" stroke="#993C1D" stroke-width="1.5"/>`;
+  }
+
+  s += '</svg>';
+  return s;
+}
+
+const cpiCtx = document.createElement('canvas');
+document.getElementById('cpi-chart-wrap').appendChild(cpiCtx);
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+new Chart(cpiCtx, {
+  type: 'bar',
+  data: {
+    labels: ['ADDI × 3', 'ADD', 'SW (store)', 'LW (load)', 'BEQ (branch)', 'SUB', 'HALT'],
+    datasets: [{
+      label: 'Cycles',
+      data: [6, 6, 8, 9, 5, 6, 1],
+      backgroundColor: ['#185FA566','#185FA566','#993C1D66','#993C1D66','#99355666','#185FA566','#73726c44'],
+      borderColor:     ['#185FA5','#185FA5','#993C1D','#993C1D','#993556','#185FA5','#73726c'],
+      borderWidth: 1,
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.raw} cycles (CPI = ${ctx.raw})` } }
+    },
+    scales: {
+      x: { grid: { color: isDark?'#2c2c2a':'#e8e6e0' }, ticks: { color: isDark?'#b4b2a9':'#888780', font: { size: 11 } } },
+      y: { grid: { color: isDark?'#2c2c2a':'#e8e6e0' }, ticks: { color: isDark?'#b4b2a9':'#888780', font: { size: 11 } }, min: 0, max: 11,
+           title: { display: true, text: 'cycles', color: isDark?'#888780':'#b4b2a9', font: { size: 11 } } }
+    }
+  }
+});
+
+const avgLine = {
+  id: 'avgLine',
+  afterDraw(chart) {
+    const {ctx, scales:{x,y}} = chart;
+    const yPx = y.getPixelForValue(6.3);
+    ctx.save();
+    ctx.setLineDash([4,3]);
+    ctx.strokeStyle = isDark?'#FAC775':'#BA7517';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x.left, yPx);
+    ctx.lineTo(x.right, yPx);
+    ctx.stroke();
+    ctx.fillStyle = isDark?'#FAC775':'#BA7517';
+    ctx.font = '10px sans-serif';
+    ctx.fillText('avg 6.3', x.right - 44, yPx - 3);
+    ctx.restore();
+  }
+};
+Chart.register(avgLine);
+</script>
