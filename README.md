@@ -24,8 +24,9 @@ The project is organized into versioned design iterations. Each folder labeled `
 
 ### 📌 Current Versions
 
-- **v0** — Structural skeleton of the CPU
-
+- **v1-mini** : Operational CPU, can be simulated and run code but missing some elements of v1.
+- **v0** : Structural skeleton of the CPU
+  
 Each version folder contains:
 - RTL source files for that version  
 - A folder containing testbenches  
@@ -39,30 +40,28 @@ Files are intentionally **not organized using Vivado’s default `src/` and `sim
 
 This project deliberately separates **structural design**, **behavioral definition**, and **software capability** across versions. This avoids premature complexity and keeps architectural decisions clean and reviewable.
 
-### 🧱 v0 — Structural Skeleton (Current)
+### 🧱 v1-mini : Barebones Operational CPU (Current)
 
-- Core CPU modules exist in skeleton form  
-- Interfaces and datapaths are defined  
-- Clocking and reset strategy established  
-- Modules are not yet fully integrated  
-- No ISA, instruction semantics, or software execution  
-
-Think of this version as IKEA furniture before assembly. All parts exist, but nothing is optimized or fully connected yet.
+- Custom ISA is defined
+- Modules are fully integrated
+- Simulation runs successfuly and testbench produces expected outputs 
+- No optimizations or pipelining yet  
+- UART and Video Output are not yet implemented
 
 ---
 
 ## 🛣️ Roadmap
 
-### 🧱 v0 — Structural Foundation
+### 🧱 v0 : Structural Foundation
 Skeleton CPU modules are constructed and interfaces are defined. The focus is on clean structure, correct timing, and forward compatibility. No instruction set or execution semantics exist at this stage.
 
-### ⚙️ v1 — ISA and System Integration
+### ⚙️ v1 : ISA and System Integration
 The instruction set architecture and CPU specifications are defined. Modules from v0 are integrated into a functioning CPU. UART and basic video output are added. The CPU is capable of executing non-trivial software workloads, with **DOOM used as a late-stage validation target in simulation** 🎮.
 
-### 🧩 v2 — Bare-Metal Software and Peripherals
+### 🧩 v2 : Bare-Metal Software and Peripherals
 The system is extended with a minimal bare-metal runtime and simple task management. Basic peripheral support is added (e.g., GPIO, timers, and selected external devices). The focus is on **hardware–software interaction**, not a full general-purpose operating system.
 
-### 🤖 v3 — AI Acceleration
+### 🤖 v3 : AI Acceleration
 A neural network accelerator is integrated into the system, enabling the CPU to perform AI-related workloads and demonstrating heterogeneous compute capability.
 
 ---
