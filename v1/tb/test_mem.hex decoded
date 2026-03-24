@@ -1,9 +1,0 @@
-ADDI r4, r0, 10      -> r4 = 10
-ADDI r5, r0, 20      -> r5 = 20
-ADD  r6, r4, r5      -> r6 = 30
-ADDI r7, r0, 256     -> r7 = 256
-SW   r6, 0(r7)       -> mem[256] = 30
-LW   r8, 0(r7)       -> r8 = 30
-CMP  r0, r8, r6      -> Z=1
-BEQ  +4              -> (Z=1, taken, jumps to HALT)
-HALT
