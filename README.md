@@ -1,8 +1,8 @@
 # 🧠 FPGA CPU Development
 
-This repository documents the design and development of a custom CPU implemented on an Artix-7 FPGA using Verilog. The target platform is the **Alchitry Au V2** development board.
+This repository documents the design and development of a custom CPU architecture implemented on an Artix-7 FPGA using Verilog. The target platform is the Alchitry Au V2 development board.
 
-🎯 **Goal:** Build a fully custom CPU from the ground up, progressing from a structural hardware skeleton to a complete system capable of running real software workloads and, eventually, AI acceleration.
+🎯 **Goal:** Design, implement, and evolve a fully custom CPU from the ground up, progressing from hardware bring-up to a usable compute platform, followed by performance optimization and domain-specific acceleration.
 
 ---
 
@@ -18,51 +18,109 @@ https://shop.alchitry.com/products/alchitry-au
 
 ---
 
+## 📍 Current Status
+
+> 🚧 **Current Stage: v1-mini (Hardware Bring-Up Complete)**
+
+- Custom CPU successfully implemented and synthesized  
+- Simulation verified with working testbenches  
+- Successfully brought up on FPGA hardware  
+- Implementation/resource reports generated  
+- Timing report generation currently under investigation  
+
+Next milestone: **v1 - UART-based program loading and output capture**
+
+---
+
 ## 🗂️ Repository Structure and Versioning
 
-The project is organized into versioned design iterations. Each folder labeled `v0`, `v1`, `v2`, etc. represents a major architectural milestone. Version numbers increase sequentially, with earlier versions serving as the foundation for later ones.
+The project is organized into versioned architectural milestones. Each version represents a meaningful step in system capability and complexity.
 
-### 📌 Current Versions
+### 📌 Versions
 
-- **v1-mini** : Operational CPU, can be simulated and run code but missing some elements of v1.
-- **v0** : Structural skeleton of the CPU
-  
+- **v1-mini (current)** : Functional CPU + hardware bring-up  
+- **v1** : Usable system with UART interface (program loading + output)  
+- **v2** : Performance upgrade (pipelining + cache) with benchmarking  
+- **v3** : Neural network accelerator integration  
+
+- **v0** : Structural CPU skeleton (initial groundwork)
+
 Each version folder contains:
-- RTL source files for that version  
-- A folder containing testbenches  
-- One or more documents describing the goals, design decisions, limitations, and outputs of that version  
+- RTL source files  
+- Testbenches  
+- Supporting documentation (design decisions, results, limitations)
 
-Files are intentionally **not organized using Vivado’s default `src/` and `sim/` layout**. Instead, each version is self-contained to improve clarity, traceability, and long-term maintainability.
+Versions are intentionally self-contained rather than using Vivado’s default `src/` and `sim/` layout. This improves traceability and allows each stage of the architecture to be independently understood.
 
 ---
 
 ## 🧠 Version Philosophy
 
-This project deliberately separates **structural design**, **behavioral definition**, and **software capability** across versions. This avoids premature complexity and keeps architectural decisions clean and reviewable.
+This project is structured to separate concerns across stages:
 
-### 🧱 v1-mini : Barebones Operational CPU (Current)
+- **Bring-up (v1-mini)** → Prove correctness on hardware  
+- **Usability (v1)** → Enable program I/O and observability  
+- **Performance (v2)** → Improve architectural efficiency  
+- **Specialization (v3)** → Add domain-specific acceleration  
 
-- Custom ISA is defined
-- Modules are fully integrated
-- Simulation runs successfuly and testbench produces expected outputs 
-- No optimizations or pipelining yet  
-- UART and Video Output are not yet implemented
+Each stage builds on the previous one without introducing unnecessary complexity too early.
+
+---
+
+## 🧱 v1-mini - Hardware Bring-Up Baseline (Current)
+
+- Custom ISA defined and implemented  
+- All core modules integrated  
+- Simulation produces correct outputs  
+- Successfully deployed and executed on FPGA hardware  
+- No pipelining or cache  
+- No external I/O interface yet (UART pending)
+
+This stage validates that the CPU architecture is functionally correct and physically realizable.
 
 ---
 
 ## 🛣️ Roadmap
 
-### 🧱 v0 : Structural Foundation
-Skeleton CPU modules are constructed and interfaces are defined. The focus is on clean structure, correct timing, and forward compatibility. No instruction set or execution semantics exist at this stage.
+### ⚙️ v1 - System Interface (Next)
 
-### ⚙️ v1 : ISA and System Integration
-The instruction set architecture and CPU specifications are defined. Modules from v0 are integrated into a functioning CPU. UART and basic video output are added. The CPU is capable of executing non-trivial software workloads, with **DOOM used as a late-stage validation target in simulation** 🎮.
+- UART RX/TX integration  
+- Program loading from host PC  
+- Output/data dump from FPGA to host  
+- Repeatable execution workflow  
+- Improved hardware debugging and observability  
 
-### 🧩 v2 : Bare-Metal Software and Peripherals
-The system is extended with a minimal bare-metal runtime and simple task management. Basic peripheral support is added (e.g., GPIO, timers, and selected external devices). The focus is on **hardware–software interaction**, not a full general-purpose operating system.
+**Goal**: Transform the CPU into a usable experimental platform
 
-### 🤖 v3 : AI Acceleration
-A neural network accelerator is integrated into the system, enabling the CPU to perform AI-related workloads and demonstrating heterogeneous compute capability.
+---
+
+### 🚀 v2 - Performance Architecture
+
+- Pipeline implementation  
+- Cache subsystem  
+- Performance benchmarking and analysis  
+
+Includes a report comparing:
+- v1 vs v2 performance  
+- Execution efficiency improvements  
+- Architectural tradeoffs  
+
+**Goal**: Improve execution speed and system efficiency
+
+---
+
+### 🤖 v3 - Neural Network Acceleration
+
+- Integration of a neural network accelerator  
+- CPU ↔ accelerator interface design  
+- Workload-specific optimization  
+
+Includes a report analyzing:
+- Performance gains from acceleration  
+- Resource tradeoffs  
+- System-level impact  
+
+**Goal**: Demonstrate hardware-accelerated parallel computing
 
 ---
 
