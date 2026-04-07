@@ -4,9 +4,9 @@
 ## ============================================================
 
 ## Clock - 100 MHz on-board oscillator
-## Set to 75 bMHZ since 100 caused timing issues in the MUL path
+## Set to 70 MHZ since 100 & 75 caused timing issues in the MUL path
 set_property -dict { PACKAGE_PIN N14 IOSTANDARD LVCMOS33 } [get_ports { clk }]
-create_clock -name clk -period 13.333 -waveform {0.000 6.667} [get_ports { clk }] 
+create_clock -name clk -period 14.286 -waveform {0.000 7.143} [get_ports { clk }]
 ## Reset - active low button (P6)
 set_property -dict { PACKAGE_PIN P6  IOSTANDARD LVCMOS33 } [get_ports { rst_n }]
 
