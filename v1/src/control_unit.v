@@ -529,11 +529,38 @@ module control_unit (
                             wb_sel = `WB_SEL_ALU;
                         end
                     end
-
-                    `OPC_LB,
-                    `OPC_LBU,
-                    `OPC_LH,
-                    `OPC_LHU,
+					`OPC_LB: begin
+						if (itype_has_rd) begin
+							rd_we        = 1'b1;
+							wb_sel       = `WB_SEL_MEM;
+							d_size       = `MEM_SIZE_B;
+							load_ext_sel = `LOAD_EXT_SIGN;
+						end
+					end
+					`OPC_LBU: begin
+						if (itype_has_rd) begin
+							rd_we        = 1'b1;
+							wb_sel       = `WB_SEL_MEM;
+							d_size       = `MEM_SIZE_B;
+							load_ext_sel = `LOAD_EXT_ZERO;
+						end
+					end
+					`OPC_LH: begin
+						if (itype_has_rd) begin
+							rd_we        = 1'b1;
+							wb_sel       = `WB_SEL_MEM;
+							d_size       = `MEM_SIZE_H;
+							load_ext_sel = `LOAD_EXT_SIGN;
+						end
+					end
+					`OPC_LHU: begin
+						if (itype_has_rd) begin
+							rd_we        = 1'b1;
+							wb_sel       = `WB_SEL_MEM;
+							d_size       = `MEM_SIZE_H;
+							load_ext_sel = `LOAD_EXT_ZERO;
+						end
+					end
                     `OPC_LW: begin
                         if (itype_has_rd) begin
                             rd_we  = 1'b1;

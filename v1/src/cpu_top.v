@@ -3,12 +3,14 @@
 
 module cpu_top #(
     parameter MEM_BYTES = 65536,
-    parameter INIT_FILE = ""
+    parameter INIT_FILE = "C:/Users/rgaff/Desktop/CPU/v1/tb/test_mem.hex"
 )(
     input  wire clk,
-    input  wire rst
+    input  wire rst_n, // alchitry au v2 polarity is reversed
+    output wire halt_out // adding this so the design isnt removed during synthesis
 );
 
+    wire rst = ~rst_n;
     // ============================================================
     // Interconnect: control_unit <-> datapath
     // ============================================================
@@ -62,6 +64,7 @@ module cpu_top #(
     wire [`FSM_STATE_W-1:0]  state_out;
     wire                     alu_latch;
 
+    assign halt_out = halt; // So the whole thing doesnt delete during synth
     // ============================================================
     // Trap interface
     // ============================================================
