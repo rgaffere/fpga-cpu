@@ -27,10 +27,10 @@ The project is developed in stages, progressing from a functional baseline CPU t
 - [Simulation, Validation & Performance Report]()  
   -> Functional correctness, execution trace, CPI, and performance metrics  
 
-- [Post-Implementation Report](v1/docs/v1-mini_Post-Implementation_Report.pdf)  
+- [Post-Implementation Report](v1/docs/v1-mini%20Post-Implemlentation%20Report.pdf)  
   -> Timing, utilization, and hardware implementation results  
 
-- [ISA Specification](v1/docs/v1_Instruction_Set_Architecture_(ISA)_Specification.pdf)  
+- [ISA Specification](v1/docs/v1%20Instruction%20Set%20Architecture%20(ISA)%20Specification.pdf)  
   -> Custom instruction set definition and encoding  
 
 ---
