@@ -24,7 +24,7 @@ The project is developed in stages, progressing from a functional baseline CPU t
 
 ### v1-mini (Baseline CPU)
 
-- [Simulation, Validation & Performance Report]()  
+- [Simulation, Validation & Performance Report](v1/docs/v1-mini%20Simulation%20%26%20Performance%20Report.pdf)  
   -> Functional correctness, execution trace, CPI, and performance metrics  
 
 - [Post-Implementation Report](v1/docs/v1-mini%20Post-Implemlentation%20Report.pdf)  
