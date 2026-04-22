@@ -150,7 +150,7 @@ The multi-cycle architecture establishes a performance baseline for direct compa
 | [ISA Specification](v1/docs/v1%20Instruction%20Set%20Architecture%20(ISA)%20Specification.pdf) | Custom instruction set encoding and field definitions |
 | [Simulation & Performance Report](v1/docs/v1-mini%20Simulation%20%26%20Performance%20Report.pdf) | Functional correctness, execution trace, CPI, performance metrics |
 | [Post-Implementation Report](v1/docs/v1-mini%20Post-Implementation%20Report.pdf) | Timing, utilization, and hardware implementation results |
-| [Hardware Debug & Tooling](v1/docs/v1_Hardware_Debug_and_Tooling.pdf) | Debug module design, trace format, and PuTTY setup |
+| [Hardware Debug & Tooling](v1/docs/v1%20Hardware%20Debug%20and%20Tooling.pdf) | Debug module design, trace format, and PuTTY setup |
 
 ---
 
