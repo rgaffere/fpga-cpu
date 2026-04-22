@@ -75,7 +75,43 @@ module datapath #(
     output wire [`XLEN-1:0]         wb_data_out,
 	
 	output wire                     if_misaligned,
-	output wire                     d_misaligned
+	output wire                     d_misaligned,
+
+    // a bunch of debug ports. i make a better version later. but you gotta get it to work first, then optimize
+    output wire [`XLEN-1:0]         store_data_out,
+
+    output wire [`XLEN-1:0]         dbg_r0,
+    output wire [`XLEN-1:0]         dbg_r1,
+    output wire [`XLEN-1:0]         dbg_r2,
+    output wire [`XLEN-1:0]         dbg_r3,
+    output wire [`XLEN-1:0]         dbg_r4,
+    output wire [`XLEN-1:0]         dbg_r5,
+    output wire [`XLEN-1:0]         dbg_r6,
+    output wire [`XLEN-1:0]         dbg_r7,
+    output wire [`XLEN-1:0]         dbg_r8,
+    output wire [`XLEN-1:0]         dbg_r9,
+    output wire [`XLEN-1:0]         dbg_r10,
+    output wire [`XLEN-1:0]         dbg_r11,
+    output wire [`XLEN-1:0]         dbg_r12,
+    output wire [`XLEN-1:0]         dbg_r13,
+    output wire [`XLEN-1:0]         dbg_r14,
+    output wire [`XLEN-1:0]         dbg_r15,
+    output wire [`XLEN-1:0]         dbg_r16,
+    output wire [`XLEN-1:0]         dbg_r17,
+    output wire [`XLEN-1:0]         dbg_r18,
+    output wire [`XLEN-1:0]         dbg_r19,
+    output wire [`XLEN-1:0]         dbg_r20,
+    output wire [`XLEN-1:0]         dbg_r21,
+    output wire [`XLEN-1:0]         dbg_r22,
+    output wire [`XLEN-1:0]         dbg_r23,
+    output wire [`XLEN-1:0]         dbg_r24,
+    output wire [`XLEN-1:0]         dbg_r25,
+    output wire [`XLEN-1:0]         dbg_r26,
+    output wire [`XLEN-1:0]         dbg_r27,
+    output wire [`XLEN-1:0]         dbg_r28,
+    output wire [`XLEN-1:0]         dbg_r29,
+    output wire [`XLEN-1:0]         dbg_r30,
+    output wire [`XLEN-1:0]         dbg_r31
 );
 
     // ============================================================
@@ -154,12 +190,14 @@ module datapath #(
     // JALR target = rs1 + signext(imm16)
     wire [`XLEN-1:0] rs1_data;
     wire [`XLEN-1:0] rs2_data;
-    wire [`XLEN-1:0] jalr_target    = rs1_data + imm16_sext;
+    wire [`XLEN-1:0] jalr_target = rs1_data + imm16_sext;
 
     // ============================================================
     // Register file
     // ============================================================
     wire [`XLEN-1:0] wb_data;  // forward declaration (driven by WB mux below)
+
+    assign store_data_out = rs2_data;
 
     regfile u_regfile (
         .clk      (clk),
@@ -170,7 +208,39 @@ module datapath #(
         .rs2_data (rs2_data),
         .rd_we    (rd_we && !halt),
         .rd_addr  (rd_idx),
-        .rd_data  (wb_data)
+        .rd_data  (wb_data),
+        .dbg_r0   (dbg_r0),
+        .dbg_r1   (dbg_r1),
+        .dbg_r2   (dbg_r2),
+        .dbg_r3   (dbg_r3),
+        .dbg_r4   (dbg_r4),
+        .dbg_r5   (dbg_r5),
+        .dbg_r6   (dbg_r6),
+        .dbg_r7   (dbg_r7),
+        .dbg_r8   (dbg_r8),
+        .dbg_r9   (dbg_r9),
+        .dbg_r10  (dbg_r10),
+        .dbg_r11  (dbg_r11),
+        .dbg_r12  (dbg_r12),
+        .dbg_r13  (dbg_r13),
+        .dbg_r14  (dbg_r14),
+        .dbg_r15  (dbg_r15),
+        .dbg_r16  (dbg_r16),
+        .dbg_r17  (dbg_r17),
+        .dbg_r18  (dbg_r18),
+        .dbg_r19  (dbg_r19),
+        .dbg_r20  (dbg_r20),
+        .dbg_r21  (dbg_r21),
+        .dbg_r22  (dbg_r22),
+        .dbg_r23  (dbg_r23),
+        .dbg_r24  (dbg_r24),
+        .dbg_r25  (dbg_r25),
+        .dbg_r26  (dbg_r26),
+        .dbg_r27  (dbg_r27),
+        .dbg_r28  (dbg_r28),
+        .dbg_r29  (dbg_r29),
+        .dbg_r30  (dbg_r30),
+        .dbg_r31  (dbg_r31)
     );
 
     // ============================================================

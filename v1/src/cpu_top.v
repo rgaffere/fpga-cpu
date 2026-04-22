@@ -3,12 +3,16 @@
 
 module cpu_top #(
     parameter MEM_BYTES = 65536,
-    parameter INIT_FILE = "C:/Users/rgaff/Desktop/CPU/v1/tb/test_mem.hex"
+    parameter INIT_FILE = "test_mem.hex"
 )(
     input  wire clk,
     input  wire rst_n, // alchitry au v2 polarity is reversed
-    output wire halt_out // adding this so the design isnt removed during synthesis
+    output wire halt_out, // adding this so the design isnt removed during synthesis
+    output wire uart_tx_line,
+    output wire debug_busy
 );
+
+    localparam integer UART_CLKS_PER_BIT = 868;
 
     wire rst = ~rst_n;
     // ============================================================
@@ -81,6 +85,43 @@ module cpu_top #(
 
     // Minimal interrupt hook for now
     wire ext_irq = 1'b0;
+
+    // Some crazy debug stuff
+
+    wire [`XLEN-1:0]         store_data_out;
+
+    wire [`XLEN-1:0]         dbg_r0;
+    wire [`XLEN-1:0]         dbg_r1;
+    wire [`XLEN-1:0]         dbg_r2;
+    wire [`XLEN-1:0]         dbg_r3;
+    wire [`XLEN-1:0]         dbg_r4;
+    wire [`XLEN-1:0]         dbg_r5;
+    wire [`XLEN-1:0]         dbg_r6;
+    wire [`XLEN-1:0]         dbg_r7;
+    wire [`XLEN-1:0]         dbg_r8;
+    wire [`XLEN-1:0]         dbg_r9;
+    wire [`XLEN-1:0]         dbg_r10;
+    wire [`XLEN-1:0]         dbg_r11;
+    wire [`XLEN-1:0]         dbg_r12;
+    wire [`XLEN-1:0]         dbg_r13;
+    wire [`XLEN-1:0]         dbg_r14;
+    wire [`XLEN-1:0]         dbg_r15;
+    wire [`XLEN-1:0]         dbg_r16;
+    wire [`XLEN-1:0]         dbg_r17;
+    wire [`XLEN-1:0]         dbg_r18;
+    wire [`XLEN-1:0]         dbg_r19;
+    wire [`XLEN-1:0]         dbg_r20;
+    wire [`XLEN-1:0]         dbg_r21;
+    wire [`XLEN-1:0]         dbg_r22;
+    wire [`XLEN-1:0]         dbg_r23;
+    wire [`XLEN-1:0]         dbg_r24;
+    wire [`XLEN-1:0]         dbg_r25;
+    wire [`XLEN-1:0]         dbg_r26;
+    wire [`XLEN-1:0]         dbg_r27;
+    wire [`XLEN-1:0]         dbg_r28;
+    wire [`XLEN-1:0]         dbg_r29;
+    wire [`XLEN-1:0]         dbg_r30;
+    wire [`XLEN-1:0]         dbg_r31;
 
     // ============================================================
     // Control Unit
@@ -195,7 +236,41 @@ module cpu_top #(
 
         .alu_result_out(alu_result_out),
         .mem_rdata_out(mem_rdata_out),
-        .wb_data_out  (wb_data_out)
+        .wb_data_out  (wb_data_out),
+        .store_data_out(store_data_out),
+
+        .dbg_r0       (dbg_r0),
+        .dbg_r1       (dbg_r1),
+        .dbg_r2       (dbg_r2),
+        .dbg_r3       (dbg_r3),
+        .dbg_r4       (dbg_r4),
+        .dbg_r5       (dbg_r5),
+        .dbg_r6       (dbg_r6),
+        .dbg_r7       (dbg_r7),
+        .dbg_r8       (dbg_r8),
+        .dbg_r9       (dbg_r9),
+        .dbg_r10      (dbg_r10),
+        .dbg_r11      (dbg_r11),
+        .dbg_r12      (dbg_r12),
+        .dbg_r13      (dbg_r13),
+        .dbg_r14      (dbg_r14),
+        .dbg_r15      (dbg_r15),
+        .dbg_r16      (dbg_r16),
+        .dbg_r17      (dbg_r17),
+        .dbg_r18      (dbg_r18),
+        .dbg_r19      (dbg_r19),
+        .dbg_r20      (dbg_r20),
+        .dbg_r21      (dbg_r21),
+        .dbg_r22      (dbg_r22),
+        .dbg_r23      (dbg_r23),
+        .dbg_r24      (dbg_r24),
+        .dbg_r25      (dbg_r25),
+        .dbg_r26      (dbg_r26),
+        .dbg_r27      (dbg_r27),
+        .dbg_r28      (dbg_r28),
+        .dbg_r29      (dbg_r29),
+        .dbg_r30      (dbg_r30),
+        .dbg_r31      (dbg_r31)
     );
 
     // ============================================================
@@ -216,6 +291,64 @@ module cpu_top #(
         .epc_out    (epc_out),
         .cause_out  (cause_out),
         .status_out (status_out)
+    );
+
+    // ============================================================
+    // Debug Module
+    // ============================================================
+
+        debug #(
+            .CLKS_PER_BIT(UART_CLKS_PER_BIT)
+        ) u_debug (
+        .clk           (clk),
+        .rst           (rst),
+        .instr         (instr),
+        .instr_pc      (instr_pc_out),
+        .rd_idx        (rd_idx),
+        .alu_result_out(alu_result_out),
+        .wb_data_out   (wb_data_out),
+        .store_data_out(store_data_out),
+        .state_out     (state_out),
+        .rd_we         (rd_we),
+        .d_we          (d_we),
+        .d_ready       (d_ready),
+        .halt          (halt),
+
+        .dbg_r0        (dbg_r0),
+        .dbg_r1        (dbg_r1),
+        .dbg_r2        (dbg_r2),
+        .dbg_r3        (dbg_r3),
+        .dbg_r4        (dbg_r4),
+        .dbg_r5        (dbg_r5),
+        .dbg_r6        (dbg_r6),
+        .dbg_r7        (dbg_r7),
+        .dbg_r8        (dbg_r8),
+        .dbg_r9        (dbg_r9),
+        .dbg_r10       (dbg_r10),
+        .dbg_r11       (dbg_r11),
+        .dbg_r12       (dbg_r12),
+        .dbg_r13       (dbg_r13),
+        .dbg_r14       (dbg_r14),
+        .dbg_r15       (dbg_r15),
+        .dbg_r16       (dbg_r16),
+        .dbg_r17       (dbg_r17),
+        .dbg_r18       (dbg_r18),
+        .dbg_r19       (dbg_r19),
+        .dbg_r20       (dbg_r20),
+        .dbg_r21       (dbg_r21),
+        .dbg_r22       (dbg_r22),
+        .dbg_r23       (dbg_r23),
+        .dbg_r24       (dbg_r24),
+        .dbg_r25       (dbg_r25),
+        .dbg_r26       (dbg_r26),
+        .dbg_r27       (dbg_r27),
+        .dbg_r28       (dbg_r28),
+        .dbg_r29       (dbg_r29),
+        .dbg_r30       (dbg_r30),
+        .dbg_r31       (dbg_r31),
+
+        .uart_tx_line  (uart_tx_line),
+        .debug_busy    (debug_busy)
     );
 
 endmodule

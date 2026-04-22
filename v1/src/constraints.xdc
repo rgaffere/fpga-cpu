@@ -13,7 +13,13 @@ set_property -dict { PACKAGE_PIN P6  IOSTANDARD LVCMOS33 } [get_ports { rst_n }]
 ## Halt LED - lights when CPU halts (LED0 = K13)
 set_property -dict { PACKAGE_PIN K13 IOSTANDARD LVCMOS33 } [get_ports { halt_out }]
 
-## All 8 onboard LEDs for reference (comment in as needed)
+## Debug Busy - lights when degug is busy (LED7 = N16)
+set_property -dict { PACKAGE_PIN N16 IOSTANDARD LVCMOS33 } [get_ports { debug_busy }]
+
+## Debug UART TX
+set_property -dict { PACKAGE_PIN P16 IOSTANDARD LVCMOS33 } [get_ports { uart_tx_line }]
+
+## All 8 onboard LEDs because I always forget
 # set_property -dict { PACKAGE_PIN K13 IOSTANDARD LVCMOS33 } [get_ports { led[0] }]
 # set_property -dict { PACKAGE_PIN K12 IOSTANDARD LVCMOS33 } [get_ports { led[1] }]
 # set_property -dict { PACKAGE_PIN L14 IOSTANDARD LVCMOS33 } [get_ports { led[2] }]
